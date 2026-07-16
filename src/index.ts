@@ -1,1 +1,47 @@
-console.log("hello node.js!");
+import * as fs from 'fs';
+import * as path from 'path';
+
+// __dirname代表当前这个文件所在文件夹的绝对路径：/Users/apple/Desktop/DistinctionCoding/Node-Practice/src
+// path.join：把 __dirname 和 'orderTrackLog.txt' 拼接成一个完整路径
+// logFilePath是一个全局变量
+const logFilePath = path.join(__dirname, 'orderTrackLog.txt');
+
+// : void是标注这个函数不返回任何值
+function writeOrder(name: string, date: string, status: string): void{
+    // 模版字符串
+    const orderLine = `${name}, ${date}, ${status}\n`;
+    // 调用fs模块的writeFileSync方法，参数1:写到哪个文件 参数2:写什么内容
+    // writeFileSync：如果文件不存在会自动创建，如果已经存在会覆盖
+    // Sync后缀代表同步，如果是writeFile是异步版本
+    fs.writeFileSync(logFilePath, orderLine);
+    console.log('Order has been written:', orderLine.trim());
+}
+
+function writeLog(name: string, date: string, status: string): void{
+    const logLine = `${name}, ${date}, ${status}\n`;
+    // appendFileSync是追加内容
+    fs.appendFileSync(logFilePath, logLine);
+    console.log('Log has been written:', logLine.trim());
+}
+
+function readFileFunc(): void{
+    // utf-8是把fs读出来的原始字节，按utf-8解码为人能读懂的文本字符串
+    const content = fs.readFileSync(logFilePath, 'utf-8');
+    console.log('Order records:')
+    console.log(content);
+}
+
+function removeFile(): void{
+    // 先检查一下文件存不存在
+    if (fs.existsSync(logFilePath)){
+        fs.unlinkSync(logFilePath);
+        console.log('File has been deleted', logFilePath);
+    }else{
+        console.log('Can not found file')
+    }    
+}
+
+writeOrder('alex', '01/07/2026','delivered');
+writeLog('tom', '03/07/2026', 'failed');
+readFileFunc();
+removeFile();
